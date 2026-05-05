@@ -1,0 +1,22 @@
+<!-- product_confirm_delete.html -->
+{% extends 'inventory/admin/base.html' %}
+{% block title %}Delete Product - XAMA{% endblock %}
+{% block page_title %}Delete Product{% endblock %}
+{% block content %}
+<div style="max-width: 500px; margin: 40px auto;">
+    <div class="card">
+        <div class="card-header">
+            <h3 style="color: #DC2626;">⚠️ Confirm Delete</h3>
+        </div>
+        <div class="card-body">
+            <p style="margin-bottom: 20px; color: #374151;">Are you sure you want to delete <strong>{{ product.name }}</strong> ({{ product.sku }})?</p>
+            <p style="color: #DC2626; font-size: 13px; margin-bottom: 24px;">This action cannot be undone.</p>
+            <form method="post" style="display: flex; gap: 12px;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                <a href="{% url 'product_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

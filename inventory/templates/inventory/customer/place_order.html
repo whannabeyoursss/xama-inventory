@@ -1,0 +1,62 @@
+<!-- customer/place_order.html -->
+{% extends 'inventory/customer/base.html' %}
+{% block title %}Place Order - XAMA Shop{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Place New Order</h1>
+    <p>Fill in your details and select the products you need</p>
+</div>
+
+<div style="max-width:700px;">
+    <form method="post">
+        {% csrf_token %}
+        <div class="card">
+            <div class="card-header"><h3>Your Information</h3></div>
+            <div class="card-body">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" name="customer_name" class="form-control" required value="{{ user.get_full_name|default:user.username }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input type="text" name="customer_phone" class="form-control" required placeholder="09XX-XXX-XXXX">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Delivery Address *</label>
+                    <textarea name="shipping_address" class="form-control" required placeholder="Enter your complete delivery address"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Notes (optional)</label>
+                    <textarea name="notes" class="form-control" placeholder="Any special instructions?"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><h3>Select Products</h3></div>
+            <div class="card-body" style="padding:0;">
+                <table>
+                    <thead><tr><th>Select</th><th>Product</th><th>Price</th><th>Qty</th></tr></thead>
+                    <tbody>
+                        {% for p in products %}
+                        <tr>
+                            <td><input type="checkbox" name="product_id" value="{{ p.pk }}" style="width:16px;height:16px;cursor:pointer;"></td>
+                            <td>
+                                <div style="font-weight:500;">{{ p.name }}</div>
+                                <div style="font-size:11px;color:#9CA3AF;">{{ p.sku }}</div>
+                            </td>
+                            <td style="color:#0C447C;font-weight:600;">₱{{ p.unit_price }}</td>
+                            <td><input type="number" name="quantity" value="1" min="1" max="{{ p.quantity }}" class="form-control" style="width:80px;padding:6px 10px;"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;font-size:15px;">✅ Submit Order</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'inventory/admin/base.html' %}
+{% block title %}Users - XAMA Admin{% endblock %}
+{% block page_title %}Manage Users{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3>All Users <span style="color:#6B7280;font-weight:400;">({{ profiles.count }})</span></h3>
+    </div>
+    <div class="card-body" style="padding:0;">
+        {% if profiles %}
+        <table>
+            <thead>
+                <tr><th>Username</th><th>Email</th><th>Role</th><th>Date Joined</th><th>Change Role</th></tr>
+            </thead>
+            <tbody>
+                {% for profile in profiles %}
+                <tr>
+                    <td style="font-weight:500;">{{ profile.user.username }}</td>
+                    <td style="color:#6B7280;">{{ profile.user.email|default:"—" }}</td>
+                    <td>
+                        {% if profile.role == 'admin' %}
+                            <span class="badge badge-admin">Admin</span>
+                        {% else %}
+                            <span class="badge badge-info">Customer</span>
+                        {% endif %}
+                    </td>
+                    <td style="color:#6B7280;font-size:12px;">{{ profile.user.date_joined|date:"M d, Y" }}</td>
+                    <td>
+                        {% if profile.user != request.user %}
+                        <form method="post" action="{% url 'user_role_update' profile.pk %}" style="display:flex;gap:6px;align-items:center;">
+                            {% csrf_token %}
+                            <select name="role" class="form-control" style="width:auto;padding:5px 10px;font-size:12px;">
+                                <option value="admin" {% if profile.role == 'admin' %}selected{% endif %}>Admin</option>
+                                <option value="customer" {% if profile.role == 'customer' %}selected{% endif %}>Customer</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                        </form>
+                        {% else %}
+                            <span style="color:#9CA3AF;font-size:12px;">You</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">👥</div>
+            <h3>No users yet</h3>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

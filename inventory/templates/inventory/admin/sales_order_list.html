@@ -1,0 +1,60 @@
+{% extends 'inventory/admin/base.html' %}
+{% block title %}Sales Orders - XAMA{% endblock %}
+{% block page_title %}Sales Orders{% endblock %}
+{% block content %}
+<div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+    <a href="#" class="btn btn-primary">+ New Sales Order</a>
+</div>
+<div class="card">
+    <div class="card-header">
+        <h3>All Sales Orders</h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        {% if orders %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Order Date</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td style="font-family: monospace; font-weight: 500;">SO-{{ order.order_number }}</td>
+                    <td style="font-weight: 500;">{{ order.customer_name }}</td>
+                    <td>{{ order.customer_phone }}</td>
+                    <td style="color: #6B7280; font-size: 12px;">{{ order.order_date|date:"M d, Y" }}</td>
+                    <td>₱{{ order.total_amount }}</td>
+                    <td>
+                        {% if order.status == 'delivered' %}
+                            <span class="badge badge-success">Delivered</span>
+                        {% elif order.status == 'shipped' %}
+                            <span class="badge badge-info">Shipped</span>
+                        {% elif order.status == 'confirmed' %}
+                            <span class="badge badge-info">Confirmed</span>
+                        {% elif order.status == 'cancelled' %}
+                            <span class="badge badge-danger">Cancelled</span>
+                        {% else %}
+                            <span class="badge badge-warning">Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">↙</div>
+            <h3>No sales orders yet</h3>
+            <p>Create your first sales order</p>
+            <a href="#" class="btn btn-primary">+ New Sales Order</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

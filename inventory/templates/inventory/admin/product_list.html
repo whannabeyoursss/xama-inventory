@@ -1,0 +1,91 @@
+{% extends 'inventory/admin/base.html' %}
+
+{% block title %}Inventory - XAMA{% endblock %}
+{% block page_title %}Inventory{% endblock %}
+
+{% block content %}
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+    <form method="get" style="display: flex; gap: 10px; align-items: center;">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" name="search" value="{{ search_query }}" placeholder="Search products..." class="form-control" style="padding-left: 36px;">
+        </div>
+        <select name="category" class="form-control" style="width: auto;">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+                <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="status" class="form-control" style="width: auto;">
+            <option value="">All Status</option>
+            <option value="in_stock">In Stock</option>
+            <option value="low_stock">Low Stock</option>
+            <option value="out_of_stock">Out of Stock</option>
+        </select>
+        <button type="submit" class="btn btn-secondary">Filter</button>
+    </form>
+    <a href="{% url 'product_create' %}" class="btn btn-primary">+ Add Product</a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>All Products <span style="color:#6B7280; font-weight:400;">({{ products.count }})</span></h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        {% if products %}
+        <table>
+            <thead>
+                <tr>
+                    <th>SKU</th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Supplier</th>
+                    <th>Stock</th>
+                    <th>Unit Price</th>
+                    <th>Total Value</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td style="font-family: monospace; color: #6B7280; font-size: 12px;">{{ product.sku }}</td>
+                    <td>
+                        <a href="{% url 'product_detail' product.pk %}" style="color: #0C447C; text-decoration: none; font-weight: 500;">
+                            {{ product.name }}
+                        </a>
+                    </td>
+                    <td>{{ product.category|default:"—" }}</td>
+                    <td>{{ product.supplier|default:"—" }}</td>
+                    <td>{{ product.quantity }} pcs</td>
+                    <td>₱{{ product.unit_price }}</td>
+                    <td>₱{{ product.total_value }}</td>
+                    <td>
+                        {% if product.status == 'in_stock' %}
+                            <span class="badge badge-success">In Stock</span>
+                        {% elif product.status == 'low_stock' %}
+                            <span class="badge badge-warning">Low Stock</span>
+                        {% else %}
+                            <span class="badge badge-danger">Out of Stock</span>
+                        {% endif %}
+                    </td>
+                    <td style="white-space: nowrap;">
+                        <a href="{% url 'product_update' product.pk %}" class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">Edit</a>
+                        <a href="{% url 'product_delete' product.pk %}" class="btn btn-danger" style="padding: 5px 10px; font-size: 12px; margin-left: 4px;">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📦</div>
+            <h3>No products found</h3>
+            <p>Try a different search or add a new product</p>
+            <a href="{% url 'product_create' %}" class="btn btn-primary">+ Add Product</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

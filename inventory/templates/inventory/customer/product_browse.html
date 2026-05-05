@@ -1,0 +1,57 @@
+<!-- customer/product_browse.html -->
+{% extends 'inventory/customer/base.html' %}
+{% block title %}Products - XAMA Shop{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Browse Products</h1>
+    <p>All available items from XAMA Consumer Goods Trading</p>
+</div>
+
+<form method="get" style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+    <input type="text" name="search" value="{{ search_query }}" placeholder="Search products..." class="form-control" style="max-width:280px;">
+    <select name="category" class="form-control" style="width:auto;">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Search</button>
+    <a href="{% url 'customer_product_browse' %}" class="btn btn-secondary">Clear</a>
+</form>
+
+<div class="card">
+    <div class="card-header">
+        <h3>{{ products.count }} Product{{ products.count|pluralize }} Found</h3>
+        <a href="{% url 'customer_place_order' %}" class="btn btn-primary btn-sm">🛒 Place Order</a>
+    </div>
+    <div class="card-body" style="padding:0;">
+        {% if products %}
+        <table>
+            <thead><tr><th>Product Name</th><th>Category</th><th>Unit Price</th><th>Availability</th></tr></thead>
+            <tbody>
+                {% for p in products %}
+                <tr>
+                    <td>
+                        <div style="font-weight:500;">{{ p.name }}</div>
+                        <div style="font-size:11px;color:#9CA3AF;font-family:monospace;">{{ p.sku }}</div>
+                    </td>
+                    <td style="color:#6B7280;">{{ p.category|default:"—" }}</td>
+                    <td style="font-weight:600;color:#0C447C;">₱{{ p.unit_price }}</td>
+                    <td>
+                        {% if p.status == 'in_stock' %}<span class="badge badge-success">In Stock</span>
+                        {% else %}<span class="badge badge-warning">Limited Stock</span>{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <h3>No products found</h3>
+            <p>Try a different search term or category</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

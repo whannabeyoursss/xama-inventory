@@ -1,0 +1,79 @@
+<!-- customer/dashboard.html -->
+{% extends 'inventory/customer/base.html' %}
+{% block title %}Home - XAMA Shop{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Welcome back, {{ user.username }}! 👋</h1>
+    <p>Browse our available products and place orders anytime.</p>
+</div>
+
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;">
+    <div>
+        <div class="card">
+            <div class="card-header">
+                <h3>Available Products</h3>
+                <a href="{% url 'customer_product_browse' %}" class="btn btn-secondary btn-sm">View All</a>
+            </div>
+            <div class="card-body" style="padding:0;">
+                {% if products %}
+                <table>
+                    <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th></tr></thead>
+                    <tbody>
+                        {% for p in products %}
+                        <tr>
+                            <td style="font-weight:500;">{{ p.name }}</td>
+                            <td style="color:#6B7280;">{{ p.category|default:"—" }}</td>
+                            <td style="color:#0C447C;font-weight:600;">₱{{ p.unit_price }}</td>
+                            <td>
+                                {% if p.status == 'in_stock' %}<span class="badge badge-success">Available</span>
+                                {% else %}<span class="badge badge-warning">Limited</span>{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state"><p>No products available right now.</p></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="card">
+            <div class="card-header"><h3>My Recent Orders</h3></div>
+            <div class="card-body" style="padding:0;">
+                {% if my_orders %}
+                <table>
+                    <thead><tr><th>Order #</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% for order in my_orders %}
+                        <tr>
+                            <td style="font-family:monospace;font-size:12px;">SO-{{ order.order_number }}</td>
+                            <td>
+                                {% if order.status == 'delivered' %}<span class="badge badge-success">Delivered</span>
+                                {% elif order.status == 'shipped' %}<span class="badge badge-info">Shipped</span>
+                                {% elif order.status == 'cancelled' %}<span class="badge badge-danger">Cancelled</span>
+                                {% else %}<span class="badge badge-warning">{{ order.status|title }}</span>{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state" style="padding:24px;">
+                    <p style="margin-bottom:12px;">No orders yet.</p>
+                    <a href="{% url 'customer_place_order' %}" class="btn btn-primary btn-sm">Place First Order</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div style="background:#0C447C;border-radius:12px;padding:20px;color:#fff;">
+            <div style="font-size:13px;opacity:0.7;margin-bottom:8px;">Quick Actions</div>
+            <a href="{% url 'customer_place_order' %}" class="btn" style="background:rgba(255,255,255,0.15);color:#fff;width:100%;text-align:center;margin-bottom:8px;display:block;">🛒 Place New Order</a>
+            <a href="{% url 'customer_my_orders' %}" class="btn" style="background:rgba(255,255,255,0.1);color:#fff;width:100%;text-align:center;display:block;">📋 View All Orders</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

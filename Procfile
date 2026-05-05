@@ -1,0 +1,1 @@
+web: gunicorn xama_project.wsgi --log-file -
