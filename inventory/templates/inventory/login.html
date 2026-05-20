@@ -58,6 +58,10 @@
             <button type="submit" class="btn-login">Sign In</button>
         </form>
 
+        <div style="text-align: center; margin-top: 14px;">
+            <a href="{% url 'password_reset' %}" style="font-size: 13px; color: #0C447C; text-decoration: none;">Forgot Password?</a>
+        </div>
+
         <div class="divider"><span>don't have an account?</span></div>
         <a href="{% url 'register' %}" class="btn-signup-outline">Create New Account →</a>
     </div>
